@@ -1,36 +1,56 @@
 import { Task } from "../models/task.model.js";
 
-export const getAllTasks = async (req, res) => {
-  try {
-    const tasks = await Task.findAll();
-
-    return res.status(200).json(tasks);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
-};
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, isComplete } = req.body;
+    const task = await Task.create(req.body);
+    res.status(201).json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-    if (!title || !description || !isComplete) {
-      return res.status(400).json({ message: "Todos los campos son requeridos" });
+export const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.findAll();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getTaskById = async (req, res) => {
+  try {
+    const task = await Task.findByPk(req.params.id);
+    if (task) res.json(task);
+    else res.status(404).json({ message: "Tarea no encontrada" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const updateTask = async (req, res) => {
+  try {
+    const [updated] = await Task.update(req.body, {
+      where: { id: req.params.id },
+    });
+    if (updated) {
+      const updatedTask = await Task.findByPk(req.params.id);
+      res.json(updatedTask);
+    } else {
+      res.status(404).json({ message: "Tarea no encontrada" });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-    const task = await Task.create({
-        title,
-        description,
-        isComplete,
-    });
-
-    res.status(201).json({
-      message: "Tarea creada correctamente",
-      task,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error interno del servidor" });
+export const deleteTask = async (req, res) => {
+  try {
+    const deleted = await Task.destroy({ where: { id: req.params.id } });
+    if (deleted) res.json({ message: "Tarea eliminada" });
+    else res.status(404).json({ message: "Tarea no encontrada" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
