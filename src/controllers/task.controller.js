@@ -1,8 +1,23 @@
-import { Task } from "../models/task.model.js";
+import { ModelTask } from "../models/task.model.js";
 
 
 export const createTask = async (req, res) => {
   try {
+    const { title, description, isComplete} = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    }
+    if (title.trim().length > 100) {
+      return res.status(400).json({ message: "El título no puede exceder los 100 caracteres" });
+    }
+    if (description.trim().length > 100) {
+      return res.status(400).json({ message: "La descripción no puede exceder los 255 caracteres" });
+    }
+    if(isComplete!==undefined && typeof isComplete!=="boolean") {
+      return res.status(400).json({ message: "El campo isComplete debe ser un valor booleano" });
+    }
+
     const task = await Task.create(req.body);
     res.status(201).json(task);
   } catch (err) {

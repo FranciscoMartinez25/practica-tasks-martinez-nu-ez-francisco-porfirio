@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 
-export const Task = sequelize.define(
+export const ModelTask = sequelize.define(
   "Task",
   {
     // Model attributes are defined here

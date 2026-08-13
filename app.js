@@ -5,7 +5,7 @@ import { taskRouter } from "./src/routes/task.routes.js";
 // import { Product } from "./src/models/product.model.js";
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 
 // para que entienda el formato json
 app.use(express.json());
