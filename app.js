@@ -2,6 +2,8 @@ import express from "express";
 import { startDB } from "./src/config/database.js";
 import { userRouter } from "./src/routes/user.routes.js";
 import { taskRouter } from "./src/routes/task.routes.js";
+import { aptitudUserRouter } from "./src/routes/aptitud_user.routes.js";
+import { directionRouter } from "./src/routes/direction.routes.js";
 // import { Product } from "./src/models/product.model.js";
 
 const app = express();
@@ -12,6 +14,8 @@ app.use(express.json());
 
 app.use("/api", userRouter);
 app.use("/api", taskRouter);
+app.use("/api", aptitudUserRouter);
+app.use("/api", directionRouter);
 
 // app.use("/", (req, res) => {
 //   return res.json({ message: "servidor todo listo" });

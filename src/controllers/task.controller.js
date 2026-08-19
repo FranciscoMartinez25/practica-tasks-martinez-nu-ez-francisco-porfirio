@@ -1,9 +1,9 @@
-import { ModelTask } from "../models/task.model.js";
+import { TaskModel } from "../models/task.model.js";
 
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, isComplete} = req.body;
+    const { title, description, isComplete, user_id} = req.body;
 
     if (!title || !description) {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
@@ -18,7 +18,7 @@ export const createTask = async (req, res) => {
       return res.status(400).json({ message: "El campo isComplete debe ser un valor booleano" });
     }
 
-    const task = await Task.create(req.body);
+    const task = await Task.create({ title, description, isComplete, user_id});
     res.status(201).json(task);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -27,19 +27,57 @@ export const createTask = async (req, res) => {
 
 export const getAllTasks = async (req, res) => {
   try {
-    const tasks = await Task.findAll();
-    res.json(tasks);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const tasks = await TaskModel.findAll({
+      attributes: {
+        exclude: ["user_id"],
+      },
+      //   attributes: ["title"],
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+          attributes: {
+            exclude: ["password", "user_id"],
+          },
+          include: [
+            {
+              model: DirectionModel,
+              as: "propietario",
+            },
+          ],
+        },
+      ],
+    });
+    return res.status(201).json(tasks);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
 
 export const getTaskById = async (req, res) => {
   try {
-    const task = await Task.findByPk(req.params.id);
-    if (task) res.json(task);
-    else res.status(404).json({ message: "Tarea no encontrada" });
-  } catch (err) {
+    const tasks = await TaskModel.findOne({
+      attributes: {
+        exclude: ["user_id"],
+      },
+      //   attributes: ["title"],
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+          attributes: {
+            exclude: ["password", "user_id"],
+          },
+          include: [
+            {
+              model: DirectionModel,
+              as: "propietario",
+            },
+          ],
+        },
+      ],
+    });} catch (err) {
     res.status(500).json({ error: err.message });
   }
 };

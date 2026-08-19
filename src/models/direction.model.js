@@ -1,24 +1,31 @@
+
+//calle
+//numero
+
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
-import { DirectionModel } from "./direction.model.js";
+import { UserModel } from "./user.model.js";
 
-export const UserModel = sequelize.define(
-  "User",
+export const DirectionModel = sequelize.define(
+  "Direction",
   {
     // Model attributes are defined here
-    name: {
+    street: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
+    number: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    user_id:{
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      reference:{
+        model:"User",
+        key:"id"
+      }
+    }
   },
   {
     // Other model options go here
@@ -27,7 +34,4 @@ export const UserModel = sequelize.define(
     timestamps: false,
   },
 );
-
-
-UserModel.hasOne(DirectionModel, { foreignKey: "user_id", as:"direccion" });
-DirectionModel.belongsTo(UserModel, { foreignKey: "user_id", as:"propietario" });
+ 

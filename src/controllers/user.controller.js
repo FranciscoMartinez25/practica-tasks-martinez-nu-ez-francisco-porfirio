@@ -1,5 +1,6 @@
-import { ModelUser } from "../models/user.model.js";
-
+import { UserAptitudModel } from "../models/aptitud_user.js";
+import { TaskModel } from "../models/task.model.js";
+import { UserModel } from "../models/user.model.js";
 
 export const createUser = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ message: "La contraseña no puede exceder los 100 caracteres" });
     }
 
-    const user = await User.create(req.body);
+    const user = await UserModel.create({ name, email, password });
     return res.status(201).json(user);
 
   } catch (err) {
@@ -29,8 +30,29 @@ export const createUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
-    res.json(users);
+    const user = await UserModel.findAll({
+        attributes: {
+          exclude: ["user_id"],
+        },
+        //   attributes: ["title"],
+        include: [
+          {
+            model: TaskModel,
+            as: "tareas",
+              // attributes: {
+              //   exclude: ["title", "user_id"],
+              // },
+            // include: [
+            //   {
+            //     model: DirectionModel,
+            //     as: "propietario",
+            //   },
+            // ],
+          },
+        ],
+      });
+
+      return res.json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -38,9 +60,27 @@ export const getAllUsers = async (req, res) => {
 
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
-    if (user) res.json(user);
-    else res.status(404).json({ message: "Usuario no encontrado" });
+    const user = await UserModel.findOne({
+        attributes: {
+          exclude: ["user_id"],
+        },
+        //   attributes: ["title"],
+        include: [
+          {
+            model: TaskModel,
+            as: "tareas",
+            // attributes: {
+            //   exclude: ["title", "user_id"],
+            // },
+            include: [
+              {
+                model: DirectionModel,
+                as: "propietario",
+              },
+            ],
+          },
+        ],
+      });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
