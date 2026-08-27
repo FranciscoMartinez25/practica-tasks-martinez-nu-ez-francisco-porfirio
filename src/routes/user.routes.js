@@ -17,6 +17,6 @@ userRouter.post("/users",createUserValidation, validate, createUser);
 
 userRouter.get("/users/:id", getUserById);
 
-userRouter.put("/users/:id", updateUser, validate, updateUserValidation);
+userRouter.put("/users/:id", updateUser, validate, updateUser);
 
 userRouter.delete("/users/:id", deleteUser);

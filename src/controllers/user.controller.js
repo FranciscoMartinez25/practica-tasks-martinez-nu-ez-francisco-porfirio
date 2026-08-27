@@ -1,26 +1,13 @@
+import { matchedData } from "express-validator";
 import { UserAptitudModel } from "../models/aptitud_user.js";
 import { TaskModel } from "../models/task.model.js";
 import { UserModel } from "../models/user.model.js";
 
 export const createUser = async (req, res) => {
   try {
+    const validateData = matchedData(req) 
 
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Todos los campos son obligatorios" });
-    }
-    if (name.trim().length > 100) {
-      return res.status(400).json({ message: "El nombre no puede exceder los 100 caracteres" });
-    }
-    if (email.trim().length > 100) {
-      return res.status(400).json({ message: "El email no puede exceder los 100 caracteres" });
-    }
-    if (password.length > 100) {
-      return res.status(400).json({ message: "La contraseña no puede exceder los 100 caracteres" });
-    }
-
-    const user = await UserModel.create({ name, email, password });
+    const user = await UserModel.create(validateData);
     return res.status(201).json(user);
 
   } catch (err) {
@@ -88,7 +75,10 @@ export const getUserById = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const [updated] = await User.update(req.body, {
+
+    const validateData = matchedData(req)
+
+    const [updated] = await User.update(validateData, {
       where: { id: req.params.id },
     });
     if (updated) {
