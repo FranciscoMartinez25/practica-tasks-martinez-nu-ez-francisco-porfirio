@@ -33,7 +33,8 @@ export const TaskModel = sequelize.define(
     // Other model options go here
     // createdAt: "created_at",
     // updatedAt: false,
-    timestamps: false,
+    // timestamps: false,
+    paranoid: true
   },
 );
 
