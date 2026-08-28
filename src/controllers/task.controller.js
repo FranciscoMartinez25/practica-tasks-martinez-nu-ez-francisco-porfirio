@@ -1,4 +1,6 @@
+import { DirectionModel } from "../models/direction.model.js";
 import { TaskModel } from "../models/task.model.js";
+import { UserModel } from "../models/user.model.js";
 
 
 export const createTask = async (req, res) => {
@@ -23,14 +25,14 @@ export const getAllTasks = async (req, res) => {
       include: [
         {
           model: UserModel,
-          as: "author",
+          as: "propietario",
           attributes: {
             exclude: ["password", "user_id"],
           },
           include: [
             {
               model: DirectionModel,
-              as: "propietario",
+              as: "direccion",
             },
           ],
         },
